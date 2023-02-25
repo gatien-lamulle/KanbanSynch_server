@@ -1,4 +1,4 @@
-import "https://deno.land/std@0.178.0/dotenv/load.ts";
+import "https://deno.land/std@0.177.0/dotenv/load.ts";
 import { Application, Router, RouterContext } from 'https://deno.land/x/oak@v9.0.1/mod.ts';
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 import { applyGraphQL, gql, GQLError } from "https://deno.land/x/oak_graphql/mod.ts";
