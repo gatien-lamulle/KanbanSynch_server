@@ -337,6 +337,7 @@ export default {
             return "Error during creating user";
         },
         login: async (_: any, {username, password}: any, context: any) => {
+            console.log("login");
             const userPasshash = await User.select('passhash').find(username);
             if (userPasshash) {
                 const result = await bcrypt.compare(password, userPasshash.passhash as string);
