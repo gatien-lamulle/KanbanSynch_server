@@ -1,0 +1,85 @@
+scalar DateTime
+
+enum Status {
+    TODO
+    INPROGRESS
+    DONE
+}
+
+type Token {
+    exist: Boolean!
+    username: String
+}
+
+type User {
+    username: ID!
+    email: String!
+    passhash: String!
+    tasks: [Task]!
+    createdKanbans: [Kanban!]!
+    guestedKanbans: [Kanban!]!
+}
+
+input UserInput {
+    username: ID
+}
+
+type Kanban {
+    idKanban: ID
+    public: Boolean!
+    name: String
+    creator: User
+    tasks: [Task!]!
+    guests: [User!]!
+}
+
+input KanbanInput {
+    idKanban: ID
+}
+
+type Task {
+    idTask: ID!
+    title: String!
+    description: String
+    creationDate: DateTime
+    endDate: DateTime
+    status: Status!
+    kanban: Kanban!
+    holder: [User!]!
+}
+
+input TaskInput {
+    idTask: ID
+}
+
+type Query {
+    token: Token
+    username(username: ID) : [String]
+    user(username: ID, email: String, kanban: KanbanInput): User
+    users(kanban: KanbanInput): [User]
+    checkKanban(id: ID): Boolean
+    kanban(id: ID, task: TaskInput): Kanban
+    kanbans(creator: UserInput, guest: UserInput): [Kanban]
+    task(id: ID, title: String): Task
+    tasks(holder: ID, status: String, kanban: ID): [Task]
+}
+
+type Mutation {
+    addKanban(id: ID!, isPublic: Boolean, creatorId: ID, name: String): Kanban
+    removeKanban(id: ID!): Kanban
+    addTask(id: ID!, title: String!, description: String, endDate: String, holders: [UserInput], status: Status, kanbanId: ID!): Task
+    removeTask(id: ID!): Task
+    setCreator(kanbanId: ID!): Kanban
+    setName(kanbanId: ID!, name: String): Kanban
+    setPublic(kanbanId: ID!, isPublic: Boolean!): Kanban
+    setStatus(taskId: ID!, status: Status!): Task
+    addGuest(kanbanId: ID!, userId: ID!): User
+    removeGuest(kanbanId: ID!, userId: ID!): User
+    addHolder(taskId: ID!, userId: ID!): User
+    removeHolder(taskId: ID!, userId: ID!): User
+    signup(username: ID!, email: String!, password: String!): String
+    login(username: ID!, password: String!): String
+    logout(username: ID!): User
+    changeEmail(email: String!): String
+    changePassword(oldPassword: String!, newPassword: String!): String
+}
