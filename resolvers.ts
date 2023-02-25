@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import * as date from 'https://deno.land/std@0.93.0/datetime/mod.ts';
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
+import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
 import * as jwt from "https://deno.land/x/djwt@v2.3/mod.ts"
 
 import { User, Kanban, Task, UserKanban, UserTask } from './tables.ts';

@@ -1,8 +1,8 @@
 import "https://deno.land/std@0.177.0/dotenv/load.ts";
 import { Application, Router, RouterContext } from 'https://deno.land/x/oak@v9.0.1/mod.ts';
-import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
-import { applyGraphQL, gql, GQLError } from "https://deno.land/x/oak_graphql@0.6.3/mod.ts";
-import { Database, PostgresConnector, Relationships } from "https://deno.land/x/denodb@v1.0.40/mod.ts";
+import { oakCors } from "https://deno.land/x/cors/mod.ts";
+import { applyGraphQL, gql, GQLError } from "https://deno.land/x/oak_graphql/mod.ts";
+import { Database, PostgresConnector, Relationships } from "./denodb-local-fix/mod.ts";
 import { User, Kanban, Task, UserKanban, UserTask } from './tables.ts';
 
 const connector = new PostgresConnector({
