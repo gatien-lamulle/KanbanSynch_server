@@ -354,12 +354,9 @@ export default {
             return "Error during creating user";
         },
         login: async (_: any, {username, password}: any, context: any) => {
-            console.log("login");
             const userPasshash = await User.select('passhash').find(username);
             if (userPasshash) {
-                console.log(userPasshash.passhash, password);
                 const result = await compare(password, userPasshash.passhash as string);
-                console.log("apres");
                 
                 if (result) {
                     const kanban: any | any[] = await Kanban.where('user_id', username).get();
