@@ -1,10 +1,27 @@
 // deno-lint-ignore-file no-explicit-any
 import * as date from 'https://deno.land/std@0.93.0/datetime/mod.ts';
-import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
+// import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
 import * as jwt from "https://deno.land/x/djwt@v2.3/mod.ts"
 
 import { User, Kanban, Task, UserKanban, UserTask } from './tables.ts';
 
+import {
+    hash as hashPromise,
+    hashSync,
+    compare as comparePromise,
+    compareSync,
+  } from "https://deno.land/x/bcrypt/mod.ts";
+  
+  export const isRunningInDenoDeploy = (globalThis as any).Worker === undefined;
+
+  export const hash: typeof hashPromise = isRunningInDenoDeploy
+    ? (plaintext: string, salt: string | undefined = undefined) =>
+        new Promise((res) => res(hashSync(plaintext, salt)))
+    : hashPromise;
+  export const compare: typeof comparePromise = isRunningInDenoDeploy
+    ? (plaintext: string, hash: string) =>
+        new Promise((res) => res(compareSync(plaintext, hash)))
+    : comparePromise;
 
 const JWT_SECRET = await crypto.subtle.generateKey(
     { name: "HMAC", hash: "SHA-512" },
@@ -325,7 +342,7 @@ export default {
             return await User.find(userId);
         },
         signup: async (_: any, {username, email, password}: any, context: any) => {
-            const passhash = await bcrypt.hash(password);
+            const passhash = await hash(password);
             const user = await User.create({
                 username,
                 email,
@@ -341,7 +358,7 @@ export default {
             const userPasshash = await User.select('passhash').find(username);
             if (userPasshash) {
                 console.log(userPasshash.passhash, password);
-                const result = await bcrypt.compare(password, userPasshash.passhash as string);
+                const result = await compare(password, userPasshash.passhash as string);
                 console.log("apres");
                 
                 if (result) {
@@ -388,9 +405,9 @@ export default {
             try {
                 const userPasshash = await User.select('passhash').find(username);      
                 if (!userPasshash) return "Error, bad current password";
-                const result = await bcrypt.compare(oldPassword, userPasshash.passhash as string);
+                const result = await compare(oldPassword, userPasshash.passhash as string);
                 if (!result) return "Error, bad current password";
-                let password = await bcrypt.hash(newPassword);
+                let password = await hash(newPassword);
                 let updatedUser = await User.where('username', user.username as string).update('passhash', password);
                 return "Password successly updated"
             } catch(e) {
