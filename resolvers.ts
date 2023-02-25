@@ -340,7 +340,10 @@ export default {
             console.log("login");
             const userPasshash = await User.select('passhash').find(username);
             if (userPasshash) {
+                console.log(userPasshash.passhash, password);
                 const result = await bcrypt.compare(password, userPasshash.passhash as string);
+                console.log("apres");
+                
                 if (result) {
                     const kanban: any | any[] = await Kanban.where('user_id', username).get();
                     console.log("Login...", kanban);
